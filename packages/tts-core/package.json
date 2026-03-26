@@ -1,1 +1,13 @@
-{ "name": "@canto/tts-core", "private": true, "scripts": { "build": "echo build tts-core", "lint": "echo lint tts-core", "typecheck": "echo typecheck tts-core" } }
+{
+  "name": "@canto/tts-core",
+  "private": true,
+  "exports": {
+    "./provider-router": "./src/provider-router.ts",
+    "./adapters/*": "./src/adapters/*"
+  },
+  "scripts": {
+    "build": "echo build tts-core",
+    "lint": "echo lint tts-core",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}

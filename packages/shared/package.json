@@ -1,1 +1,13 @@
-{ "name": "@canto/shared", "private": true, "scripts": { "build": "echo build shared", "lint": "echo lint shared", "typecheck": "echo typecheck shared" } }
+{
+  "name": "@canto/shared",
+  "private": true,
+  "exports": {
+    "./types/*": "./src/types/*",
+    "./constants/*": "./src/constants/*"
+  },
+  "scripts": {
+    "build": "echo build shared",
+    "lint": "echo lint shared",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}

@@ -1,1 +1,13 @@
-{ "name": "@canto/preprocess", "private": true, "scripts": { "build": "echo build preprocess", "lint": "echo lint preprocess", "typecheck": "echo typecheck preprocess" } }
+{
+  "name": "@canto/preprocess",
+  "private": true,
+  "exports": {
+    "./pipeline": "./src/pipeline.ts",
+    "./*": "./src/*"
+  },
+  "scripts": {
+    "build": "echo build preprocess",
+    "lint": "echo lint preprocess",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}

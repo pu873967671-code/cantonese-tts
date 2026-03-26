@@ -9,7 +9,8 @@
     "dev:web": "pnpm --filter web dev",
     "build": "pnpm -r build",
     "lint": "pnpm -r lint",
-    "typecheck": "pnpm -r typecheck",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "demo:happy-path": "tsx scripts/fake-happy-path.ts",
     "db:generate": "pnpm --filter @canto/db prisma generate",
     "db:migrate": "pnpm --filter @canto/db prisma migrate dev",
     "db:studio": "pnpm --filter @canto/db prisma studio",
@@ -18,7 +19,9 @@
     "docker:logs": "docker compose logs -f"
   },
   "devDependencies": {
+    "@types/node": "^24.5.2",
     "concurrently": "^9.0.1",
+    "tsx": "^4.19.2",
     "typescript": "^5.8.2"
   }
 }
