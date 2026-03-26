@@ -6,3 +6,123 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Book {
+  id             String      @id @default(uuid())
+  title          String
+  sourceText     String      @map("source_text")
+  sceneType      String      @default("storybook") @map("scene_type")
+  sourceLanguage String      @default("zh-CN") @map("source_language")
+  targetLanguage String      @default("yue-HK") @map("target_language")
+  status         String      @default("draft")
+  voiceId        String?     @map("voice_id")
+  provider       String?
+  totalChars     Int         @default(0) @map("total_chars")
+  segmentCount   Int         @default(0) @map("segment_count")
+  createdAt      DateTime    @default(now()) @map("created_at")
+  updatedAt      DateTime    @updatedAt @map("updated_at")
+
+  segments       Segment[]
+  jobs           Job[]
+  qaFeedbacks    QaFeedback[]
+
+  @@map("books")
+}
+
+model Segment {
+  id                String      @id @default(uuid())
+  bookId            String      @map("book_id")
+  seq               Int
+  rawText           String      @map("raw_text")
+  normalizedText    String?     @map("normalized_text")
+  cantoneseText     String?     @map("cantonese_text")
+  pronunciationText String?     @map("pronunciation_text")
+  audioUrl          String?     @map("audio_url")
+  durationMs        Int?        @map("duration_ms")
+  status            String      @default("pending")
+  error             String?
+  qaScore           Decimal?    @db.Decimal(4, 2) @map("qa_score")
+  createdAt         DateTime    @default(now()) @map("created_at")
+  updatedAt         DateTime    @updatedAt @map("updated_at")
+
+  book              Book        @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  jobs              Job[]
+  qaFeedbacks       QaFeedback[]
+
+  @@unique([bookId, seq])
+  @@index([bookId])
+  @@map("segments")
+}
+
+model Job {
+  id         String      @id @default(uuid())
+  bookId     String      @map("book_id")
+  segmentId  String?     @map("segment_id")
+  jobType    String      @default("tts") @map("job_type")
+  provider   String?
+  voiceId    String?     @map("voice_id")
+  status     String      @default("queued")
+  retryCount Int         @default(0) @map("retry_count")
+  error      String?
+  startedAt  DateTime?   @map("started_at")
+  finishedAt DateTime?   @map("finished_at")
+  createdAt  DateTime    @default(now()) @map("created_at")
+
+  book       Book        @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  segment    Segment?    @relation(fields: [segmentId], references: [id], onDelete: Cascade)
+
+  @@index([bookId])
+  @@index([segmentId])
+  @@index([status])
+  @@map("jobs")
+}
+
+model LexiconEntry {
+  id            String   @id @default(uuid())
+  scope         String   @default("global")
+  scopeRef      String?  @map("scope_ref")
+  sourceTerm    String   @map("source_term")
+  targetReading String   @map("target_reading")
+  termType      String   @default("custom") @map("term_type")
+  notes         String?
+  enabled       Boolean  @default(true)
+  priority      Int      @default(100)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@index([scope, scopeRef])
+  @@index([sourceTerm])
+  @@map("lexicon_entries")
+}
+
+model QaFeedback {
+  id           String   @id @default(uuid())
+  bookId       String   @map("book_id")
+  segmentId    String?  @map("segment_id")
+  issueType    String   @map("issue_type")
+  severity     String   @default("medium")
+  comment      String?
+  suggestedFix String?  @map("suggested_fix")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  book         Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  segment      Segment? @relation(fields: [segmentId], references: [id], onDelete: Cascade)
+
+  @@index([bookId])
+  @@index([segmentId])
+  @@map("qa_feedback")
+}
+
+model Voice {
+  id          String   @id
+  provider    String
+  locale      String
+  displayName String   @map("display_name")
+  gender      String?
+  styleTags   String[] @default([]) @map("style_tags")
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([provider, locale])
+  @@map("voices")
+}
