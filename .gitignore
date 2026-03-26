@@ -1,0 +1,15 @@
+node_modules
+dist
+.next
+coverage
+.env
+.env.local
+.env.*.local
+pnpm-lock.yaml.bak
+prisma/dev.db
+*.log
+data/
+tmp/
+storage/
+audio/
+.DS_Store

@@ -1,0 +1,1 @@
+{ "name": "@canto/shared", "private": true, "scripts": { "build": "echo build shared", "lint": "echo lint shared", "typecheck": "echo typecheck shared" } }

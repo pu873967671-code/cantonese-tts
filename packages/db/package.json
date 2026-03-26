@@ -1,0 +1,10 @@
+{
+  "name": "@canto/db",
+  "private": true,
+  "scripts": {
+    "prisma": "prisma",
+    "build": "echo build db",
+    "lint": "echo lint db",
+    "typecheck": "tsc --noEmit"
+  }
+}

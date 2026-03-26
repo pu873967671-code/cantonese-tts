@@ -1,0 +1,1 @@
+{ "name": "@canto/preprocess", "private": true, "scripts": { "build": "echo build preprocess", "lint": "echo lint preprocess", "typecheck": "echo typecheck preprocess" } }

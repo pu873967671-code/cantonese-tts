@@ -1,0 +1,1 @@
+{ "name": "@canto/lexicon", "private": true, "scripts": { "build": "echo build lexicon", "lint": "echo lint lexicon", "typecheck": "echo typecheck lexicon" } }
