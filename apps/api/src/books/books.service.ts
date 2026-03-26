@@ -8,6 +8,7 @@ import type {
 } from "@canto/shared/types/api";
 import { preprocessText } from "@canto/preprocess/pipeline";
 import { QueueService } from "../lib/queue.service";
+import { PrismaService } from "../lib/prisma.service";
 
 type BookRecord = BookDetail;
 
@@ -16,7 +17,12 @@ export class BooksService {
   private readonly books = new Map<string, BookRecord>();
   private readonly segments = new Map<string, SegmentItem[]>();
 
-  constructor(private readonly queueService: QueueService) {}
+  constructor(
+    private readonly queueService: QueueService,
+    private readonly prismaService: PrismaService,
+  ) {
+    void this.prismaService;
+  }
 
   createBook(input: CreateBookRequest): BookDetail {
     const now = new Date().toISOString();
@@ -28,7 +34,7 @@ export class BooksService {
       sourceText: input.sourceText,
       status: "draft",
       sceneType: input.sceneType ?? "storybook",
-      voiceId: input.voiceId ?? null,
+      voiceId: input.voiceId ?? "zh-HK-HiuMaanNeural",
       segmentCount: 0,
       totalChars: input.sourceText.length,
       createdAt: now,
@@ -96,6 +102,7 @@ export class BooksService {
     return {
       ok: true,
       queued: true,
+      stage: "preprocess",
       bookId: id,
       segmentCount: nextSegments.length,
     };
@@ -103,7 +110,9 @@ export class BooksService {
 
   enqueueGenerate(id: string) {
     const book = this.ensureBook(id);
-    this.queueService.addTtsJobs(id, this.segments.get(id) ?? []);
+    const segments = this.segments.get(id) ?? [];
+
+    this.queueService.addTtsJobs(id, segments, book.voiceId ?? "zh-HK-HiuMaanNeural");
 
     this.books.set(id, {
       ...book,
@@ -114,8 +123,10 @@ export class BooksService {
     return {
       ok: true,
       queued: true,
+      stage: "generate",
       bookId: id,
       queue: ["tts", "merge"],
+      segmentCount: segments.length,
     };
   }
 

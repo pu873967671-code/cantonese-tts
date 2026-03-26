@@ -4,10 +4,17 @@ export type PreprocessJobPayload = {
 
 export type TtsJobPayload = {
   jobId: string;
+  bookId: string;
+  segmentId: string;
+  provider?: "azure";
+  voiceId?: string;
+  text: string;
+  outputPath: string;
 };
 
 export type MergeJobPayload = {
   bookId: string;
+  outputPath?: string;
 };
 
 export type RetryJobPayload = {

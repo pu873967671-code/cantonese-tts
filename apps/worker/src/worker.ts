@@ -8,7 +8,15 @@ async function bootstrap() {
   console.log("worker boot", QUEUE_NAMES);
 
   await runPreprocessJob({ bookId: "demo-book" });
-  await runTtsJob({ jobId: "demo-job" });
+  await runTtsJob({
+    jobId: "demo-job",
+    bookId: "demo-book",
+    segmentId: "demo-segment",
+    provider: "azure",
+    voiceId: "zh-HK-HiuMaanNeural",
+    text: "从前有一只小熊。",
+    outputPath: "demo-book-1.mp3",
+  });
   await runMergeJob({ bookId: "demo-book" });
   await runRetryJob({ segmentId: "demo-segment" });
 }
